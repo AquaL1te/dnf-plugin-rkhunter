@@ -1,0 +1,29 @@
+.TH "DNF-PLUGIN-RKHUNTER" "8" "Jul 22 2020" "1.0" "dnf-plugin-rkhunter"
+.SH NAME
+dnf-plugin-rkhunter \- DNF rkhunter plugin
+.sp
+.SH DESCRIPTION
+\fBdnf-plugin-rkhunter\fR is a plugin for DNF to do an automatic update of the
+rkhunter property files after each DNF transaction.
+.sp
+.SH CONFIGURATION
+.sp
+\fB/etc/dnf/plugins/rkhunter.conf\fP
+.sp
+The [main] section must be present. To enable the plugin, make sure
+the auto_propupd value is placed under [main] and is set to 1 (default is 0).
+.sp
+.nf
+.ft C
+[main]
+auto_propupd = 1
+.ft P
+.fi
+.SH SEE ALSO
+.nf
+\fBrkhunter\fR(8),
+\fBdnf\fR(8),
+.fi
+.sp
+.SH AUTHOR
+Kees de Jong (keesdejong@fedoraproject.org)
