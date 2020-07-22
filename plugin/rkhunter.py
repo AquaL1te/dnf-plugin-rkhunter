@@ -22,7 +22,7 @@ import subprocess
 import time
 import traceback
 
-from dnfpluginsextras import _
+from dnfpluginsextras import _, logger
 import dnf.cli
 import dnf.util
 
@@ -72,31 +72,38 @@ class Rkhunter(dnf.Plugin):
 
             # Custom rkhunter config has precedence when defined in /etc/dnf/plugins/rkhunter.conf
             if self.custom_config and os.path.exists(self.custom_config):
+                logger.debug("{}: Found rkhunter config {}".format(os.path.abspath(__file__), self.custom_config))
                 if self.parse_config(self.custom_config):
                     subprocess.run(["/usr/bin/rkhunter", "--propupd"])
                     return
 
             # If no custom and no local rkhunter config file is used, use the main one
-            if not os.path.exists("/etc/rkhunter.conf.local") and os.path.exists("/etc/rkhunter.conf"):
-                if self.parse_config("/etc/rkhunter.conf"):
-                    subprocess.run(["/usr/bin/rkhunter", "--propupd"])
-                    return
-
             if os.path.exists("/etc/rkhunter.conf.local"):
+                logger.debug("{}: Found rkhunter config {}".format(os.path.abspath(__file__), "/etc/rkhunter.conf.local"))
                 if self.parse_config("/etc/rkhunter.conf.local"):
                     subprocess.run(["/usr/bin/rkhunter", "--propupd"])
                     return
 
-            print("{}: No rkhunter config file found".format(os.path.abspath(__file__)))
+            if not os.path.exists("/etc/rkhunter.conf.local") and os.path.exists("/etc/rkhunter.conf"):
+                logger.debug("{}: Found rkhunter config {}".format(os.path.abspath(__file__), "/etc/rkhunter.conf"))
+                if self.parse_config("/etc/rkhunter.conf"):
+                    subprocess.run(["/usr/bin/rkhunter", "--propupd"])
+                    return
+
+            logger.warning("{}: No rkhunter config file found".format(os.path.abspath(__file__)))
 
 
     def parse_config(self, path):
         """
         Only run rkhunter when the rkhunter config makes use of the hashes, attributes or properties
         """
-        with open(path, "r") as f:
-            rkhunter_conf = f.read()
-            enable_tests = re.findall(r"^ENABLE_TESTS\s?=.*(?:all|ALL|properties|attributes|hashes)", rkhunter_conf, re.MULTILINE)
-            disable_tests = re.findall(r"^DISABLE_TESTS\s?=.*(?:all|ALL|properties|attributes|hashes)", rkhunter_conf, re.MULTILINE)
+        try:
+            with open(path, "r") as f:
+                rkhunter_conf = f.read()
+                enable_tests = re.findall(r"^ENABLE_TESTS\s?=.*(?:all|ALL|properties|attributes|hashes)", rkhunter_conf, re.MULTILINE)
+                disable_tests = re.findall(r"^DISABLE_TESTS\s?=.*(?:all|ALL|properties|attributes|hashes)", rkhunter_conf, re.MULTILINE)
+        except IOError as e:
+            logger.warning("{}: Error reading rkhunter config file {}, {}".format(os.path.abspath(__file__), path, e))
+            return False
 
         return enable_tests and not disable_tests
