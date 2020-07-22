@@ -8,15 +8,31 @@ rkhunter property files after each DNF transaction.
 .sp
 .SH CONFIGURATION
 .sp
-\fB/etc/dnf/plugins/rkhunter.conf\fP
+.B /etc/dnf/plugins/rkhunter.conf
 .sp
-The [main] section must be present. To enable the plugin, make sure
-the auto_propupd value is placed under [main] and is set to 1 (default is 0).
+The \fB[main]\fR section must be present and all options must be listed below
+this section. To enable the plugin, make sure the \fBauto_propupd\fR option
+is set to 1 (default is 0). A custom rkhunter config can be defined by setting
+the \fBcustom_config\fR option, make sure both DNF and rkhunter can read this
+file in the /etc/rkhunter.d directory. The \fBcustom_config\fR then takes
+precedence over the other rkhunter config files. By default the
+\fBcustom_config\fR option is commented out and not used. When the
+\fBcustom_config\fR is not set, the plugin will look for the native rkhunter
+config files. The \fIexact\fP order in which rkhunter config files are read
+is as follows:
 .sp
+.nf
+1) \fBcustom_config\fR
+2) /etc/rkhunter.conf.local (recommended, see rkhunter manual)
+3) /etc/rkhunter.conf
+.fi
+.sp
+.B Config example:
 .nf
 .ft C
 [main]
 auto_propupd = 1
+custom_config = /etc/rkhunter.d/custom.conf
 .ft P
 .fi
 .SH SEE ALSO
