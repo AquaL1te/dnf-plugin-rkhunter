@@ -15,10 +15,6 @@
 # You should have received a copy of the GNU General Public License along
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# pylint: disable=bad-continuation
-# pylint: disable=invalid-name
-# pylint: disable=logging-format-interpolation
-
 """Automatic updates of rkhunter property files after DNF transactions"""
 
 from __future__ import absolute_import
@@ -34,6 +30,7 @@ import dnf.util
 
 class Rkhunter(dnf.Plugin):
     """DNF plugin for `rkhunter` command"""
+
     name = "rkhunter"
 
     def __init__(self, base, cli):
@@ -74,11 +71,14 @@ class Rkhunter(dnf.Plugin):
         if not self.base.transaction:
             return
 
-        # Only run rkhunter when auto_propupd is set to 1 in /etc/dnf/plugins/rkhunter.conf
+        # Only run rkhunter when auto_propupd is set to 1
+        # in /etc/dnf/plugins/rkhunter.conf
         if self.auto_propupd:
 
-            # Custom rkhunter config has precedence when defined in /etc/dnf/plugins/rkhunter.conf
-            # If no custom and no local rkhunter config file is used, use the main one
+            # Custom rkhunter config has precedence when defined
+            # in /etc/dnf/plugins/rkhunter.conf
+            # If no custom and no local rkhunter config file is used,
+            # use the main one
             for config in [
                 self.custom_config,
                 "/etc/rkhunter.conf.local",
@@ -107,6 +107,7 @@ class Rkhunter(dnf.Plugin):
                 "{}: No rkhunter config file found".format(os.path.abspath(__file__))
             )
 
+
 def parse_config(path):
     """
     Only run rkhunter when the rkhunter config makes use of the hashes,
@@ -116,12 +117,12 @@ def parse_config(path):
         with open(path, "r") as f:
             rkhunter_conf = f.read()
             enable_tests = re.findall(
-                r"^ENABLE_TESTS\s?=.*(?:all|ALL|properties|attributes|hashes)",
+                r"^ENABLE_TESTS\s?=.*(?:all|'ALL|properties|attributes|hashes)",
                 rkhunter_conf,
                 re.MULTILINE,
             )
             disable_tests = re.findall(
-                r"^DISABLE_TESTS\s?=.*(?:all|ALL|properties|attributes|hashes)",
+                r"^DISABLE_TESTS\s?=.*(?:all|'ALL|properties|attributes|hashes)",
                 rkhunter_conf,
                 re.MULTILINE,
             )
