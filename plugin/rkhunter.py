@@ -35,6 +35,7 @@ class Rkhunter(dnf.Plugin):
 
     def __init__(self, base, cli):
         super().__init__(base, cli)
+
         self.timestamp = time.time()
         self.base = base
         self.cli = cli
@@ -43,6 +44,7 @@ class Rkhunter(dnf.Plugin):
 
     def config(self):
         """Read out the /etc/dnf/plugins/rkhunter.conf config"""
+
         cp = self.read_config(self.base.conf)
 
         self.auto_propupd = (
