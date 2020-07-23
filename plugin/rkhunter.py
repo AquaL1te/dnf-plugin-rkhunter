@@ -106,32 +106,34 @@ class Rkhunter(dnf.Plugin):
                         return
 
             logger.warning(
-                "{}: No rkhunter config file found".format(os.path.abspath(__file__))
+                "{}: No valid rkhunter config file found".format(
+                    os.path.abspath(__file__)
+                )
             )
 
 
-def parse_config(path):
+def parse_config(config):
     """
     Only run rkhunter when the rkhunter config makes use of the hashes,
     attributes or properties
     """
     try:
-        with open(path, "r") as f:
+        with open(config, "r") as f:
             rkhunter_conf = f.read()
             enable_tests = re.findall(
-                r"^ENABLE_TESTS\s?=.*(?:all|'ALL|properties|attributes|hashes)",
+                r"^ENABLE_TESTS\s?=.*(?:all|ALL|properties|attributes|hashes)",
                 rkhunter_conf,
                 re.MULTILINE,
             )
             disable_tests = re.findall(
-                r"^DISABLE_TESTS\s?=.*(?:all|'ALL|properties|attributes|hashes)",
+                r"^DISABLE_TESTS\s?=.*(?:all|ALL|properties|attributes|hashes)",
                 rkhunter_conf,
                 re.MULTILINE,
             )
     except IOError as e:
         logger.warning(
             "{}: Error reading rkhunter config file {}, {}".format(
-                os.path.abspath(__file__), path, e
+                os.path.abspath(__file__), config, e
             )
         )
         return False
