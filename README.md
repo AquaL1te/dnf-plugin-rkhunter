@@ -9,4 +9,4 @@ RPM spec file available [here](https://fedorapeople.org/cgit/keesdejong/public_g
 In the cloned git directory, run `man man/dnf-plugin-rkhunter.8` to see the documentation.
 
 ## Discontinued
-I created this plugin to learn a bit more about DNF plugins. Best solution is to use the `dnf-plugin-post-transaction-actions` [plugin](https://github.com/rpm-software-management/dnf-plugins-core/blob/master/plugins/post-transaction-actions.py) and created the following configuration in /etc/dnf/plugins/post-transaction-actions.d/rkhunter.action: `*:any:rkhunter --propupd`.
+I created this plugin to learn a bit more about DNF plugins. Best solution is to use the `dnf-plugin-post-transaction-actions` [plugin](https://github.com/rpm-software-management/dnf-plugins-core/blob/master/plugins/post-transaction-actions.py) and create the following configuration in /etc/dnf/plugins/post-transaction-actions.d/rkhunter.action: `*:any:rkhunter --propupd`.
